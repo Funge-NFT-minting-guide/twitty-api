@@ -12,7 +12,7 @@ app.config['JSON_AS_ASCII'] = False
 api = Api(app=app, version='1.0', title='Twitty-API')
 
 
-minting = api.model('Minting', {
+minting_tweet = api.model('MintingTweet', {
     '_id': fields.String(readonly=True),
     'id': fields.String(readonly=True),
     'created_at': fields.DateTime(),
@@ -40,7 +40,7 @@ parser.add_argument('flag', type=str, default=None, choices=('invalid', 'outdate
 
 @api.route('/minting/tweets')
 class MintingTweets(Resource):
-    @api.marshal_list_with(minting)
+    @api.marshal_list_with(minting_tweet)
     def get(self):
         args = parser.parse_args()
         print(args)
@@ -50,23 +50,23 @@ class MintingTweets(Resource):
 
 @api.route('/minting/tweets/search/<string:date>')
 class MintingTweetsSearch(Resource):
-    @api.marshal_list_with(minting)
+    @api.marshal_list_with(minting_tweet)
     def get(self, data):
         pass
 
 
-@api.route('/minting/tweets/<string:_id>')
+@api.route('/minting/tweets/<string:tid>')
 class MintingTweetsOne(Resource):
-    @api.marshal_with(minting)
-    def get(self, _id):
-        ret = db.find_one('minting_tweets', {'id': _id})
-        return [ret] if ret else abort(*ERR_NOT_FOUND)
+    @api.marshal_with(minting_tweet)
+    def get(self, tid):
+        ret = db.find_one('minting_tweets', {'id': tid})
+        return ret if ret else abort(*ERR_NOT_FOUND)
 
 
-    @api.marshal_list_with(minting)
-    def put(self, _id):
+    @api.marshal_list_with(minting_tweet)
+    def put(self, tid):
         args = parser.parse_args()
-        ret = db.find_one_and_update('minting_tweets', {'id': _id}, {'$set': {args['flag']: True}})
+        ret = db.find_one_and_update('minting_tweets', {'id': tid}, {'$set': {args['flag']: True}})
         return [ret] if ret else abort(*ERR_NOT_FOUND)
             
 
