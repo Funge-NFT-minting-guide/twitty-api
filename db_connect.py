@@ -23,3 +23,9 @@ class DAO:
 
     def insert_many(self, collection, documents):
         return self.mongo[collection].insert_many(documents)
+
+    def countTotal(self, collection):
+        return self.mongo[collection].estimated_document_count()
+
+    def count(self, collection, query):
+        return self.mongo[collection].count_documents(filter=query)

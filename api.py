@@ -68,6 +68,23 @@ class MintingTweetsOne(Resource):
         args = parser.parse_args()
         ret = db.find_one_and_update('minting_tweets', {'id': tid}, {'$set': {args['flag']: True}})
         return [ret] if ret else abort(*ERR_NOT_FOUND)
+
+
+@api.route('/minting/tweets/total')
+class MintingTweetsTotal(Resource):
+    def get(self):
+        ret = db.countTotal('minting_tweets')
+        return ret
+
+
+@api.route('/minting/data/total')
+class MintingDataTotal(Resource):
+    def get(self):
+        args = parser.parse_args()
+        ret = db.count('minting_tweets', json.loads(args['query']))
+        return ret
+
+
             
 
 
